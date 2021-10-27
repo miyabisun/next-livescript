@@ -1,23 +1,26 @@
-module.exports = (nextConfig = {}) => {
-  return Object.assign({}, nextConfig, {
-    webpack(config, options) {
-      const path = require('path')
-      const { dir, defaultLoaders, dev, isServer } = options
+const path = require('path')
 
-      config.resolve.extensions.push('.ls')
+module.exports = (nextConfig = {}) => ({
+  ...nextConfig,
+  pageExtensions: Array.isArray(nextConfig.pageExtensions)
+    ? [...new Set([...nextConfig.pageExtensions, 'ls'])]
+    : ['js', 'ls'],
+  webpack(config, options) {
+    const { dir, defaultLoaders, dev, isServer } = options
 
-      config.module.rules.push({
-        test: /\.ls$/,
-        include: [dir],
-        exclude: /node_modules/,
-        loader: 'livescript-loader?const=true'
-      })
+    config.resolve.extensions.push('.ls')
 
-      if (typeof nextConfig.webpack === 'function') {
-        return nextConfig.webpack(config, options)
-      }
+    config.module.rules.push({
+      test: /\.ls$/,
+      include: [dir],
+      exclude: /node_modules/,
+      use: [{loader: 'livescript-loader?const=true'}],
+    })
 
-      return config
+    if (typeof nextConfig.webpack === 'function') {
+      return nextConfig.webpack(config, options)
     }
-  })
-}
+
+    return config
+  }
+})

@@ -17,4 +17,3 @@ Create a `next.config.js` in your project
 const withLivescript = require('dimensionsoftware/next-livescript')
 module.exports = withLivescript()
 ```
-
